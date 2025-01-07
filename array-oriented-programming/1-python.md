@@ -84,7 +84,7 @@ $$m = \sqrt{E^2 - p^2}$$
 
 +++
 
-**Mini-quiz:** Fix the mistake!
+**Mini-quiz 1:** Fix the mistake!
 
 ```{code-cell} ipython3
 m = (E**2 - px**2 + py**2 + pz**2)**(1/2)
@@ -92,6 +92,30 @@ m
 ```
 
 (The result above is wrong.)
+
+For reference, here's a table of Python's arithmetic operators:
+
+| operator | meaning | returns |
+|:--:|:--:|:--:|
+| `x + y` | addition | same type of number |
+| `x - y` | subtraction | same type of number |
+| `-x` | negation | same type of number |
+| `x * y` | multiplication | same type of number |
+| `x / y` | division | floating-point number |
+| `x // y` | truncated division | integer number |
+| `x % y` | modulo (remainder) | integer number |
+| `x ** y` | exponentiation | same type of number |
+| `x == y` | equality | boolean (`True` or `False`) |
+| `x != y` | inequality | boolean (`True` or `False`) |
+| `x < y` | less than | boolean (`True` or `False`) |
+| `x <= y` | less than or equal to | boolean (`True` or `False`) |
+| `x > y` | greater than | boolean (`True` or `False`) |
+| `x >= y` | greater than or equal to | boolean (`True` or `False`) |
+| `x @ y` | matrix multiplication | array |
+| `~x` | bitwise not | integer number |
+| `x & y` | bitwise and | integer number |
+| `x \| y` | bitwise or | integer number |
+| `x ^ y` | bitwise xor | integer number |
 
 +++
 
@@ -177,11 +201,15 @@ mag3d is euclidean
 In fact, we're free to delete (`del`) the original and keep using it with the new name.
 
 ```{code-cell} ipython3
-del euclidean
+euclidean(px, py, pz)
 ```
 
 ```{code-cell} ipython3
-euclidean(px, py, pz)
+mag3d(px, py, pz)
+```
+
+```{code-cell} ipython3
+del euclidean
 ```
 
 ```{code-cell} ipython3
@@ -293,6 +321,7 @@ muon.mass / GeV
 Python has data types, but unlike "compile-first" languages, it only verifies whether you're using the types correctly right before a computation, rather than in a compilation phase.
 
 ```{code-cell} ipython3
+:tags: ["raises-exception"]
 1 + "2"
 ```
 
@@ -339,7 +368,7 @@ int("2")
 t1("2")
 ```
 
-**Mini-quiz:** Before you run the following, what will it do?
+**Mini-quiz 2:** Before you run the following, what will it do?
 
 Hint: break it down in parts and test each part.
 
@@ -393,7 +422,7 @@ Notice that NumPy and Python have different opinions about whether booleans are 
 
 +++
 
-**Mini-quiz:** Write two expressions to show that booleans in Python are integers and booleans in NumPy are not.
+**Mini-quiz 3:** Write two expressions to show that booleans in Python are integers and booleans in NumPy are not.
 
 +++
 
@@ -481,7 +510,7 @@ Ranges within a `list` can be "sliced" with a colon (`:`).
 some_list[2:8]
 ```
 
-**Mini-quiz:** Before you run it, what will the following do?
+**Mini-quiz 4:** Before you run it, what will the following do?
 
 ```python
 some_list[2:8][3]
@@ -491,7 +520,21 @@ some_list[2:8][3]
 
 (We'll see more about slices in the next lesson on arrays.)
 
-+++
+One last thing: `some_list.append`, above, is our example of a method. A method is just a function on a data object, accessed through the dot (`.`) operator. It's very similar to a function in a module.
+
+`dict` objects have three very useful methods: `keys`, `values`, and `items`.
+
+```{code-cell} ipython3
+some_dict.keys()
+```
+
+```{code-cell} ipython3
+some_dict.values()
+```
+
+```{code-cell} ipython3
+some_dict.items()
+```
 
 ## A little data analysis
 
@@ -547,7 +590,7 @@ higgs = particle_decay("Higgs boson", z1, z2)
 higgs
 ```
 
-**Mini-quiz:** Define a `particle_mass` function using an equation given earlier in this lesson and use it to compute the masses of `z1`, `z2`, and `higgs`.
+**Mini-quiz 5:** Define a `particle_mass` function using an equation given earlier in this lesson and use it to compute the masses of `z1`, `z2`, and `higgs`.
 
 ```{code-cell} ipython3
 def particle_mass(particle):
@@ -572,6 +615,7 @@ for particle in particles:
 It doesn't even look ahead to see if there's trouble coming on the next line.
 
 ```{code-cell} ipython3
+:tags: ["raises-exception"]
 for particle in particles:
     print(particle["type"])
     print(particle["charge"])
@@ -626,7 +670,55 @@ for particle in particles:
         print("mu-")
 ```
 
-## From datum (singular) to data (plural)
+## List and dict comprehensions
+
++++
+
+Python has some syntax features to make code faster to type. I'm avoiding most of these, but I need to introduce "comprehensions" because I use them later in the course. The "comprehension" syntax uses `for` inside of a `list` or `dict` constructor as a shortcut for building collections.
+
+Starting from an existing collection, like
+
+```{code-cell} ipython3
+original_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+```
+
+The basic way to make a new list of squared values is
+
+```{code-cell} ipython3
+new_list = []
+for x in original_list:
+    new_list.append(x**2)
+
+new_list
+```
+
+But the `for` loop can be written inside of the `new_list` constructor.
+
+```{code-cell} ipython3
+new_list = [x**2 for x in original_list]
+new_list
+```
+
+This is a "list comprehension". A similar constructor, using curly brackets (`{` `}`) and a colon (`:`) makes dicts. It's called a "dict comprehension".
+
+```{code-cell} ipython3
+new_dict = {str(x): x**2 for x in original_list}
+new_dict
+```
+
+It's often convenient to use `dict.items` with a dict comprehension, since `for` loops only iterate over the keys.
+
+```{code-cell} ipython3
+{k: np.sqrt(v) for k, v in new_dict.items()}
+```
+
+You can also use `if` at the end of the list or dict comprehension to skip over elements.
+
+```{code-cell} ipython3
+[x for x in original_list if x % 2 == 0]
+```
+
+## A larger dataset
 
 ```{code-cell} ipython3
 import json
@@ -635,3 +727,199 @@ import json
 ```{code-cell} ipython3
 dataset = json.load(open("data/SMHiggsToZZTo4L.json"))
 ```
+
+```{code-cell} ipython3
+type(dataset)
+```
+
+```{code-cell} ipython3
+len(dataset)
+```
+
+Show just the first 3 collision events using a slice, `0:3`.
+
+```{code-cell} ipython3
+dataset[0:3]
+```
+
+For the rest of this lesson and your upcoming project, here's the meaning of each field. (We only use a few of them.)
+
+ * **run** (int): unique identifier for a data-taking period of the LHC. This is simulated data, so the run number is 1.
+ * **luminosityBlock** (int): unique identifier for a period of relatively stable conditions within a run.
+ * **event** (int): unique identifier for one crossing of LHC bunches.
+ * **PV** (dict): primary vertex of the collision.
+   - **x** (float): $x$-position in cm.
+   - **y** (float): $y$-position in cm.
+   - **z** (float): $z$-position (along the beamline) in cm.
+ * **electron** (list of dict): list of electrons (may be empty).
+   - **pt** (float): $p_T$ component of momentum transverse to the beamline in GeV/$c$.
+   - **eta** (float): $\eta$ pseudorapidity (roughly, polar angle with respect to the beamline), unitless.
+   - **phi** (float): $\phi$ azimuthal angle (in the plane that is perpendicular to the beamline), unitless.
+   - **mass** (float): measured mass of the particle in GeV/$c^2$.
+   - **charge** (int): either `+1` or `-1`, unitless.
+   - **pfRelIso03_all** (float): quantity that specifies how isolated this electron is from the rest of the particles in the event, unitless.
+   - **dxy** (float): distance of closest approach to the primary vertex in the plane that is perpendicular to the beamline, in cm.
+   - **dxyErr** (float): uncertainty in the **dxy** measurement.
+   - **dz** (float): distance of closest approach to the primary vertex in $z$, along the beamline, in cm.
+   - **dzErr** (float): uncertainty in the **dz** measurement.
+ * **muon** (list of dict): list of muons (may be empty) with the same dict fields as **electron**.
+ * **MET** (dict): missing transverse energy (in the plane perpendicular to the beamline).
+   - **pt** (float): $p_T$ magnitude, in GeV/$c$.
+   - **phi** (float): $\phi$ aximuthal angle, unitless.
+
+And here are some coordinate transformations:
+
+- $p_x = p_T \cos\phi \cosh\eta$
+- $p_y = p_T \sin\phi \cosh\eta$
+- $p_z = p_T \sinh\eta$
+- $\displaystyle E = \sqrt{{p_x}^2 + {p_y}^2 + {p_z}^2 + m^2}$
+
+But, as usual, there's a library for that: [Vector](https://vector.readthedocs.io/).
+
+```{code-cell} ipython3
+import vector
+```
+
+```{code-cell} ipython3
+def to_vector(particle):
+    return vector.obj(
+        pt=particle["pt"],
+        eta=particle["eta"],
+        phi=particle["phi"],
+        mass=particle["mass"],
+    )
+```
+
+```{code-cell} ipython3
+for particle in dataset[0]["muon"]:
+    v = to_vector(particle)
+    print(v.E, v.px, v.py, v.pz)
+```
+
+## Plotting distributions of particles
+
++++
+
+The most commonly used plotting package is [Matplotlib](https://matplotlib.org/).
+
+The way that it is conventionally imported is a little odd.
+
+```{code-cell} ipython3
+import matplotlib.pyplot as plt
+```
+
+Although it's possible to make plots directly from `plt` (when you're in a hurry), you'll usually want to structure notebook cells for plotting like this:
+
+```{code-cell} ipython3
+fig, ax = plt.subplots()
+
+...
+
+plt.show()
+```
+
+For example, this plots primary vertex `y` versus `x`.
+
+Note the use of list comprehensions. Matplotlib wants $x$ values and $y$ values in separate collections, so we have to reformat them. This would be more complex without list comprehensions.
+
+```{code-cell} ipython3
+fig, ax = plt.subplots()
+
+ax.scatter([event["PV"]["x"] for event in dataset], [event["PV"]["y"] for event in dataset])
+
+plt.show()
+```
+
+To make this plot more publication-ready, see the Matplotlib documentation or examples online.
+
+```{code-cell} ipython3
+fig, ax = plt.subplots(figsize=(5, 5))
+
+ax.scatter(
+    [event["PV"]["x"] for event in dataset],
+    [event["PV"]["y"] for event in dataset],
+    marker=".",
+)
+
+ax.set_xlim(0.228, 0.259)
+ax.set_ylim(0.378, 0.409)
+ax.set_xlabel("x (cm)")
+ax.set_ylabel("y (cm)")
+ax.set_title("primary vertices")
+
+fig.savefig("/tmp/plot.pdf")
+```
+
+The `plt.subplots` gives you a place for whole-figure options (such as `figsize`) and it can be used to make several subplots.
+
+```{code-cell} ipython3
+fig, ((ax0, ax1, ax2), (ax3, ax4, ax5)) = plt.subplots(2, 3)
+
+...
+
+plt.show()
+```
+
+The `((ax0, ax1, ax2), (ax3, ax4, ax5))` syntax is "unpacking" two nested collections of axis objects—that's something we can do whenever we know that a function returns a collection of a known size and we want them in separate variables. We can then use each axis object for separate plots.
+
+The final `plt.show()` is unnecessary in Jupyter but necessary on a Python terminal. It also prevents Jupyter from printing the last Python object in the cell, which is usually just something you used to make the plot, not something you're interested in.
+
+Next, let's make a plot of electron `py` versus `px`, using Vector for the coordinate transformation. The most complicated part is that electron collections are nested within the event collection. (This is possible in a list comprehension, but it would no longer be "simple".)
+
+```{code-cell} ipython3
+fig, ax = plt.subplots()
+
+px_values = []
+py_values = []
+for event in dataset:
+    for electron in event["electron"]:
+        v = to_vector(electron)
+        px_values.append(v.px)
+        py_values.append(v.py)
+
+plt.scatter(px_values, py_values, marker=".")
+
+plt.show()
+```
+
+## Plotting histograms
+
++++
+
+Physicists usually want to plot histograms. Matplotlib's built-in [plt.hist](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.hist.html) function can be used when you're in a hurry, but [hist](https://hist.readthedocs.io/) is a more feature-complete alternative for particle physicists.
+
+```{code-cell} ipython3
+from hist import Hist
+```
+
+For instance, you can create an empty histogram and fill it later.
+
+```{code-cell} ipython3
+met_pt = Hist.new.Reg(50, 0, 100, name="MET pT").Double()
+met_pt
+```
+
+```{code-cell} ipython3
+met_pt.fill([event["MET"]["pt"] for event in dataset])
+met_pt
+```
+
+It can be used with Matplotlib by passing the axis object as an `ax` argument.
+
+```{code-cell} ipython3
+fig, ax = plt.subplots()
+
+met_pt.plot1d(ax=ax)
+
+plt.show()
+```
+
+**Mini-quiz 6:** Make a histogram of electron $p_T$.
+
++++
+
+## Lesson 1 project: finding Higgs decays
+
++++
+
+As described in the [intro](0-intro.md), navigate to the `notebooks` directory and open `lesson-1-project.ipynb`, then follow its instructions. The projects are the most important parts of these lessons!
