@@ -5,7 +5,7 @@ channels:
 
 dependencies:
   # Python itself
-  - python=3.11
+  - python=3.14
 
   # for building and testing the JupyterBook
   - jupyter-book<2
