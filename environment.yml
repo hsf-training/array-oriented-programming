@@ -42,6 +42,6 @@ dependencies:
   # distributed computing
   - dask
   - distributed
-  - dask-awkward
+  - dask-awkward>=2026
   - graphviz
   - python-graphviz
