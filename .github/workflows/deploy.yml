@@ -11,8 +11,8 @@ on:
   workflow_dispatch:
 
   schedule:
-    # Every day at 4am UTC (10pm Chicago, 5am Geneva)
-    - cron: "00 4 * * *"
+    # First day of every month at 4am UTC (10pm Chicago, 5am Geneva)
+    - cron: "00 4 1 * *"
 
 env:
   BASE_URL: /${{ github.event.repository.name }}
