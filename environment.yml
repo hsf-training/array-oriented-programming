@@ -8,8 +8,7 @@ dependencies:
   - python=3.14
 
   # for building and testing the JupyterBook
-  - jupyter-book<2
-  - ghp-import
+  - jupyter-book>=2,<3
   - nbconvert
 
   # JupyterLab interface

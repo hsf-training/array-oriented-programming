@@ -1,12 +1,4 @@
 ---
-jupytext:
-  cell_metadata_filter: -all
-  formats: md:myst
-  text_representation:
-    extension: .md
-    format_name: myst
-    format_version: 0.13
-    jupytext_version: 1.16.6
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
@@ -15,29 +7,19 @@ kernelspec:
 
 # Lesson 2: Array-oriented programming
 
-+++
-
 Programming paradigms, such as "imperative", "object-oriented", and "functional", are general _styles_ of programming. Some programming languages favor one over the others, or make it easier to use one, rather than the others. For instance, C++ enables object-oriented programming in C.
 
 In array-oriented programming, the primary data type is an array and most functions perform one operation on all values of the array.
 
-+++
-
 ## Simple example of imperative, functional, and array-oriented
-
-+++
 
 Below are three solutions to the following problem: compute the square of each value in a collection of numbers.
 
-+++
-
 ### Imperative
-
-+++
 
 Imperative programming is likely to be the most familiar: you supply a sequence of commands and the computer follows them one by one.
 
-```{code-cell} ipython3
+```python
 original = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 result = []
@@ -49,13 +31,11 @@ result
 
 ### Functional
 
-+++
-
 Functional programming takes seriously the idea that functions are objects that can be passed around like any other data. Functional programming environments have a suite of predefined functions-that-take-functions such as `map` (apply a given function to every member of a collection, returning a collection), `filter` (use a boolean function to determine which values to keep), and `reduce` (apply a function to pairs of values in the collection to return a scalar).
 
 In the following, Python's `lambda` keyword defines a function as an expression without assigning it to a variable name (as `def` does).
 
-```{code-cell} ipython3
+```python
 original = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 result = list(map(lambda x: x**2, original))
@@ -67,7 +47,7 @@ Python is not very friendly toward functional programming, since many of its fun
 
 In Python, we often use list comprehensions where we would otherwise use `map` and `filter`.
 
-```{code-cell} ipython3
+```python
 original = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 result = [x**2 for x in original]
@@ -77,15 +57,13 @@ result
 
 ### Array-oriented
 
-+++
-
 Array-oriented programming is a little different from functional programming: instead of writing (lambda) functions and passing them to explicit calls of `map`, `filter`, and `reduce`, you use precompiled functions implicitly when you write expressions involving arrays.
 
-```{code-cell} ipython3
+```python
 import numpy as np
 ```
 
-```{code-cell} ipython3
+```python
 original = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
 result = original**2
@@ -95,7 +73,7 @@ result
 
 This formalism has the property that any mathematical expression on scalar numbers can also be applied to equal-length arrays of numbers. For example,
 
-```{code-cell} ipython3
+```python
 def quadratic_formula(a, b, c):
     return (-b + np.sqrt(b**2 - 4*a*c)) / (2*a)
 ```
@@ -106,7 +84,7 @@ $$ \frac{-b + \sqrt{b^2 - 4ac}}{2a} $$
 
 once if `a`, `b`, and `c` are scalar numbers,
 
-```{code-cell} ipython3
+```python
 a = 5
 b = 10
 c = -0.1
@@ -116,7 +94,7 @@ quadratic_formula(a, b, c)
 
 or a million times if they are arrays of length 1 million.
 
-```{code-cell} ipython3
+```python
 a = np.random.uniform(5, 10, 1000000)
 b = np.random.uniform(10, 20, 1000000)
 c = np.random.uniform(-0.1, 0.1, 1000000)
@@ -126,17 +104,13 @@ quadratic_formula(a, b, c)
 
 ## Complex example of imperative, functional, and array-oriented
 
-+++
-
 With a simple example, it's easy to see exactly what it's doing, but it doesn't convey the "flavor" of how these paradigms differ in practice.
 
 Here is a complex example. You don't have to understand the details of how each solution works—just see how they follow different approaches and how the code generally looks. The problem is to compute gravitational forces among $n$ particles in 3 dimensions.
 
-+++
-
 ### Imperative
 
-```{code-cell} ipython3
+```python
 def imperative_forces(m, x, p):
     total_force = np.zeros_like(x)
 
@@ -173,16 +147,14 @@ def imperative_forces(m, x, p):
 
 The imperative solution is a long sequence of commands in nested `for` loops.
 
-+++
-
 ### Functional
 
-```{code-cell} ipython3
+```python
 from functools import reduce
 from itertools import combinations
 ```
 
-```{code-cell} ipython3
+```python
 def functional_forces(m, x, p):
     def negate(vector):
         return [-a for a in vector]
@@ -218,11 +190,9 @@ def functional_forces(m, x, p):
 
 The functional solution defines many small functions and applies them in two list comprehensions.
 
-+++
-
 ### Array-oriented
 
-```{code-cell} ipython3
+```python
 def array_forces(m, x, p):
     i, j = np.triu_indices(len(x), k=1)
     pw_displacement = x[j] - x[i]
@@ -237,15 +207,11 @@ def array_forces(m, x, p):
 
 The array-oriented solution is very concise—maybe even "dense"—and it invovles special NumPy functions such as [np.triu_indices](https://numpy.org/doc/stable/reference/generated/numpy.triu_indices.html) for the $n (n - 1) / 2$ combinatorics and [advanced slicing](https://numpy.org/doc/stable/user/basics.indexing.html#advanced-indexing) in square brackets (`[` `]`).
 
-+++
-
 ### Comparison of the three solutions
-
-+++
 
 First, let's just verify that they give the same result in a numerical example.
 
-```{code-cell} ipython3
+```python
 # three masses
 m = np.array([2, 10, 1.1])
 
@@ -256,26 +222,26 @@ p = np.array([[3, -1, 0.5], [-13, 0, -0.2], [-10, 0.1, 0]])
 G = 1
 ```
 
-```{code-cell} ipython3
+```python
 imperative_test = imperative_forces(m, x, p)
 imperative_test
 ```
 
-```{code-cell} ipython3
+```python
 functional_test = functional_forces(m, x, p)
 functional_test
 ```
 
-```{code-cell} ipython3
+```python
 array_test = array_forces(m, x, p)
 array_test
 ```
 
-```{code-cell} ipython3
+```python
 np.allclose(imperative_test, functional_test)
 ```
 
-```{code-cell} ipython3
+```python
 np.allclose(functional_test, array_test)
 ```
 
@@ -283,25 +249,25 @@ np.allclose(functional_test, array_test)
 
 Now compare the time to compute a sample of 500 planets.
 
-```{code-cell} ipython3
+```python
 m = np.ones(500)
 x = np.random.normal(0, 1, (500, 3))
 p = np.random.normal(0, 1, (500, 3))
 ```
 
-```{code-cell} ipython3
+```python
 %%timeit -n1 -r1
 
 imperative_forces(m, x, p)
 ```
 
-```{code-cell} ipython3
+```python
 %%timeit -n1 -r1
 
 functional_forces(m, x, p)
 ```
 
-```{code-cell} ipython3
+```python
 %%timeit -n1 -r1
 
 array_forces(m, x, p)
@@ -313,13 +279,13 @@ There are good reasons for this, which we'll examine in the next section.
 
 For now, though, which one would you choose if you wanted to calculate forces repeatedly, to make animations of planetary orbits?
 
-```{code-cell} ipython3
+```python
 import matplotlib.pyplot as plt
 from matplotlib import animation
 from IPython.display import HTML
 ```
 
-```{code-cell} ipython3
+```python
 def array_step(m, x, p, dt):
     # this is a numerically stable way of updating positions, momenta, and forces
     p += array_forces(m, x, p) * (dt/2)    # half kick
@@ -327,7 +293,7 @@ def array_step(m, x, p, dt):
     p += array_forces(m, x, p) * (dt/2)    # half kick
 ```
 
-```{code-cell} ipython3
+```python
 def plot(m, x, p, dt, num_frames=100, steps_per_frame=10):
     num_particles = len(m)
 
@@ -363,7 +329,7 @@ def plot(m, x, p, dt, num_frames=100, steps_per_frame=10):
 
 Double-planet orbits a star:
 
-```{code-cell} ipython3
+```python
 m = np.array([100, 1, 1], np.float64)
 x = np.array([[0, 0, 0], [0, 0.9, 0], [0, 1.1, 0]], np.float64)
 p = np.array([[0, 0, 0], [-13, 0, 0], [-10, 0, 0]], np.float64)
@@ -373,7 +339,7 @@ plot(m, x, p, dt=0.001)
 
 Solution to the three-body problem!
 
-```{code-cell} ipython3
+```python
 a = 0.347111
 b = 0.532728
 m = np.array([1, 1, 1], np.float64)
@@ -385,7 +351,7 @@ plot(m, x, p, dt=0.01)
 
 Chaos!
 
-```{code-cell} ipython3
+```python
 m = np.ones(25)
 x = np.random.normal(0, 1, (25, 3))
 p = np.random.normal(0, 1, (25, 3))
@@ -395,13 +361,11 @@ plot(m, x, p, dt=0.0025)
 
 ## Why is array-oriented programming fast?
 
-+++
-
 A better question is, "Why is Python code slow?"
 
 Roughly speaking, there are two types of languages—the "compile-first" ones, which are fast, and interactive ones, which are slow. This plot shows execution times for 10 scientific problems implemented in 12 languages ([Debian Benchmarks Game](https://benchmarksgame-team.pages.debian.net/benchmarksgame/)).
 
-![](img/benchmark-games-2023.svg){. width="100%"}
+![](img/benchmark-games-2023.svg){width="100%"}
 
 Python, Ruby, Perl, Lua, and PHP all have the following in common:
 
@@ -419,11 +383,11 @@ However, a single NumPy function call that performs a million numerical calculat
 
 Here is a similar argument for the simple problem of squaring numbers:
 
-```{code-cell} ipython3
+```python
 original = np.random.poisson(3.14, 1000000)
 ```
 
-```{code-cell} ipython3
+```python
 def imperative_squares(original):
     result = []
     for x in original:
@@ -431,17 +395,17 @@ def imperative_squares(original):
     return result
 ```
 
-```{code-cell} ipython3
+```python
 %%timeit
 
 imperative_squares(original)
 ```
 
-```{code-cell} ipython3
+```python
 import dis  # dissasembler; shows us the Python virtual machine instructions
 ```
 
-```{code-cell} ipython3
+```python
 dis.dis(imperative_squares)
 ```
 
@@ -449,36 +413,32 @@ It steps from `FOR_ITER` to `JUMP_BACKWARD` a million times and has to verify th
 
 On the other hand, in the array-oriented solution:
 
-```{code-cell} ipython3
+```python
 def array_squares(original):
     return original**2
 ```
 
-```{code-cell} ipython3
+```python
 %%timeit
 
 array_squares(original)
 ```
 
-```{code-cell} ipython3
+```python
 dis.dis(array_squares)
 ```
 
 It steps through the above once and runs NumPy's compiled code when it gets to `BINARY_OP`. It checks array types once so that it can assume that the numeric types are correct in the loop over a million integers. The physical CPU applies even more optimizations (memory prefetching, instruction pipelining, and maybe vector instructions).
 
-+++
-
 ## Why does it use less memory?
-
-+++
 
 Arrays also use less memory than Python lists.
 
-```{code-cell} ipython3
+```python
 from pympler.tracker import SummaryTracker
 ```
 
-```{code-cell} ipython3
+```python
 memory_tracker = SummaryTracker()
 memory_tracker.diff()
 
@@ -494,7 +454,7 @@ The base list and NumPy array are both 7.63 MB, but Python also requires 26.70 M
 
 Naively, 1000000 × 8-byte integers should be
 
-```{code-cell} ipython3
+```python
 1000000 * 8 / 1024**2
 ```
 
@@ -502,25 +462,21 @@ MB. So what does Python need the extra 26.70 MB for?
 
 Here's the memory layout of a Python list of numbers:
 
-![](img/python-list-layout.svg){. width="75%"}
+![](img/python-list-layout.svg){width="75%"}
 
 and here's the memory layout of a NumPy array of numbers:
 
-![](img/python-array-layout.svg){. width="75%"}
+![](img/python-array-layout.svg){width="75%"}
 
 So if you're dealing with large datasets in Python, putting them in arrays is a good idea!
 
-+++
-
 ## Expressiveness of array-oriented programming
-
-+++
 
 The performance advantages of array-oriented programming would not be useful if it were hard to express what you need to calculate. Unlike functional programming, you cannot write a function to `map` it over a dataset: you have to piece together the calculation you want to perform using the precompiled functions NumPy provides.
 
 As an indication of what array-oriented programming is good for, here's a timeline of _all_ the array-oriented programming languages and libraries (that I know about):
 
-![](img/apl-timeline.svg){. width="100%"}
+![](img/apl-timeline.svg){width="100%"}
 
 All of them are _interactive, data analysis_ environments. They all feature
 
@@ -530,7 +486,7 @@ All of them are _interactive, data analysis_ environments. They all feature
 
 This paradigm started mathematical and concise (perhaps too much): in the original language, [APL](https://tryapl.org/),
 
-```{code-cell} ipython3
+```python
 np.arange(10)
 ```
 
@@ -540,7 +496,7 @@ was
 (⍳10) - 1
 ```
 
-```{code-cell} ipython3
+```python
 np.sum(np.arange(1, 11))
 ```
 
@@ -552,7 +508,7 @@ was
 
 and
 
-```{code-cell} ipython3
+```python
 np.cumsum(np.arange(1, 11))
 ```
 
@@ -564,15 +520,11 @@ was
 
 It had a special keyboard for mathematical symbols and writing a one-line program was hard enough to celebrate by printing it on a T-shirt.
 
-![](img/tshirt.jpg){. width="20%"}
+![](img/tshirt.jpg){width="20%"}
 
 Modern array-oriented environments like NumPy are a step back, away from extreme conciseness.
 
-+++
-
 ## Example of an array-oriented conversation
-
-+++
 
 A programming paradigm brings some concepts into the foreground and pushes others into the background:
 
@@ -592,13 +544,13 @@ Array-oriented programming emphasizes data distributions. Each precompiled step,
 
 Suppose that you have a large dataset.
 
-```{code-cell} ipython3
+```python
 dataset = np.random.normal(0, 1, 1000000)  # one MILLION data points
 ```
 
 You're not very interested in the first, or second, or third value in the dataset. You're interested in their distribution, so you plot it.
 
-```{code-cell} ipython3
+```python
 plt.hist(dataset, bins=100, range=(-5, 5));
 ```
 
@@ -606,7 +558,7 @@ It's a Gaussian (normal) distribution.
 
 What happens if we square all values in the dataset?
 
-```{code-cell} ipython3
+```python
 dataset2 = dataset**2
 
 plt.hist(dataset2, bins=100, range=(-5, 5));
@@ -614,13 +566,13 @@ plt.hist(dataset2, bins=100, range=(-5, 5));
 
 Okay, what if we compute this function?
 
-```{code-cell} ipython3
+```python
 dataset3 = np.sin(1/dataset2)
 ```
 
 What happens to the distribution? Can you guess? (I can't.)
 
-```{code-cell} ipython3
+```python
 plt.hist(dataset3, bins=100, range=(-1, 1));
 ```
 
@@ -628,13 +580,9 @@ In a data analysis, you'll be investigating some effect, such as a source of sys
 
 This combination of interactivity between operations and high-performance in operations over a whole dataset is a perfect fit for investigative data analysis.
 
-+++
-
 ## NumPy features
 
-+++
-
-![](img/Numpy_Python_Cheat_Sheet.svg){. width="100%"}
+![](img/Numpy_Python_Cheat_Sheet.svg){width="100%"}
 
 The main features you'll likely use from NumPy are:
 
@@ -647,11 +595,7 @@ The main features you'll likely use from NumPy are:
 
 For most of these, the documentation is the best source. Here, let's focus on slicing and reductions.
 
-+++
-
 ### Slicing
-
-+++
 
 Python's slicing syntax, which works on containers like `list` and `tuple`, is
 
@@ -664,141 +608,135 @@ container[start:stop:step]
 * The `step` indicates how many items between each step: `1` is normal, `2` skips every other item, `-1` goes backward, and `0` is not allowed.
 * Any of the three can be left out to get a reasonable default.
 
-```{code-cell} ipython3
+```python
 container = [0.0, 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9]
 ```
 
-```{code-cell} ipython3
+```python
 container[2:]
 ```
 
-```{code-cell} ipython3
+```python
 container[:5]
 ```
 
-```{code-cell} ipython3
+```python
 container[-6:-2]
 ```
 
-```{code-cell} ipython3
+```python
 container[4:10:2]
 ```
 
-```{code-cell} ipython3
+```python
 container[::3]
 ```
 
 NumPy arrays can be sliced like this, but they can also include a comma (`,`) to slice over multiple dimensions.
 
-![](img/numpy-slicing.png){. width="50%"}
+![](img/numpy-slicing.png){width="50%"}
 
-```{code-cell} ipython3
+```python
 arr = np.array([[1.1, 2.2, 3.3],
                 [4.4, 5.5, 6.6],
                 [7.7, 8.8, 9.9]])
 arr
 ```
 
-```{code-cell} ipython3
+```python
 arr[:2, 1:]
 ```
 
-```{code-cell} ipython3
+```python
 arr[2:, :]
 ```
 
-```{code-cell} ipython3
+```python
 arr[:, :2]
 ```
 
-```{code-cell} ipython3
+```python
 arr[1:2, :2]
 ```
 
 **Mini-quiz 1:** Given this 3D array,
 
-```{code-cell} ipython3
+```python
 array3d = np.arange(2 * 3 * 5).reshape(2, 3, 5)
 array3d
 ```
 
 you can select items
 
-![](img/array3d-highlight1.svg){. width="25%"}
+![](img/array3d-highlight1.svg){width="25%"}
 
 with
 
-```{code-cell} ipython3
+```python
 array3d[:, 1:, 1:]
 ```
 
 Write a slice that selects these elements:
 
-![](img/array3d-highlight2.svg){. width="25%"}
-
-+++
+![](img/array3d-highlight2.svg){width="25%"}
 
 **Mini-quiz 2:** Use slicing and elementwise subtraction (`-`) together to find the sizes of the spaces between consecutive elements in the following array. (They're all `1.1`.)
 
-```{code-cell} ipython3
+```python
 array = np.array([1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9])
 array
 ```
 
 Hint:
 
-![](img/flat-and-shifted-operations.svg){. width="100%"}
-
-+++
+![](img/flat-and-shifted-operations.svg){width="100%"}
 
 ### Advanced slicing
 
-+++
-
 In addition, NumPy can slice arrays with arrays. If the array in square brackets (`[` `]`) has boolean values, it must have the same length (shape) as the array to slice and items that line up with `True` are kept; items that line up with `False` are dropped.
 
-```{code-cell} ipython3
+```python
 arr  = np.array([  0.0,   1.1,   2.2,   3.3,   4.4,  5.5,   6.6,  7.7,   8.8,  9.9])
 mask = np.array([False, False, False, False, False, True, False, True, False, True])
 #                                                    5.5          7.7          9.9
 ```
 
-```{code-cell} ipython3
+```python
 arr[mask]
 ```
 
 In particle physics, this is usually used to select events, as a cut.
 
-```{code-cell} ipython3
+```python
 cut = arr > 3
 cut
 ```
 
-```{code-cell} ipython3
+```python
 arr[cut]
 ```
 
 If the array in square brackets (`[` `]`) has integer values, it picks out elements by index.
 
-```{code-cell} ipython3
+```python
 arr[np.array([5, 7, -1])]
 ```
 
 Unlike boolean-masking, the items to select can be out of order.
 
-```{code-cell} ipython3
+```python
 arr[np.array([-1, 7, 5])]
 ```
 
 And they can also include duplicates.
 
-```{code-cell} ipython3
+```python
 arr[np.array([-1, -1, -1, 7, 7, 5])]
 ```
 
 Integer array slicing is the most general kind of slicing: if you think of an array as a function from index position (integers) to values, integer array slicing is function composition. Consider this example of text vectorization:
 
-```{code-cell} ipython3
+```python
 text = """
 WOULD YOU LIKE GREEN EGGS AND HAM?
 
@@ -834,7 +772,7 @@ I DO NOT LIKE THEM, SAM-I-AM.
 """
 ```
 
-```{code-cell} ipython3
+```python
 # remove punctuation and make an array of words
 words = np.array(text.replace(",", " ").replace(".", " ").replace("?", " ").replace("!", " ").replace("-", " ").split())
 
@@ -842,41 +780,39 @@ words = np.array(text.replace(",", " ").replace(".", " ").replace("?", " ").repl
 dictionary, index = np.unique(words, return_inverse=True)
 ```
 
-```{code-cell} ipython3
+```python
 dictionary
 ```
 
-```{code-cell} ipython3
+```python
 index
 ```
 
 The `index` is a vector encoding the text corpus. The first few words are
 
-```{code-cell} ipython3
+```python
 dictionary[index[0]]
 ```
 
-```{code-cell} ipython3
+```python
 dictionary[index[1]]
 ```
 
-```{code-cell} ipython3
+```python
 dictionary[index[2]]
 ```
 
 and the whole text is
 
-```{code-cell} ipython3
+```python
 dictionary[index]
 ```
 
 ### Reductions
 
-+++
-
 Reductions are operations that reduce the number of dimensions in an array.
 
-```{code-cell} ipython3
+```python
 arr = np.array([[  1,   2,   3,   4],
                 [ 10,  20,  30,  40],
                 [100, 200, 300, 400]])
@@ -884,17 +820,17 @@ arr = np.array([[  1,   2,   3,   4],
 
 In a sense, scalar-integer slicing is a reduction:
 
-```{code-cell} ipython3
+```python
 arr[2, :]
 ```
 
-```{code-cell} ipython3
+```python
 arr[:, 3]
 ```
 
 A scalar is a zero-dimensional array, so this is also reduction:
 
-```{code-cell} ipython3
+```python
 arr[2, 3]
 ```
 
@@ -902,42 +838,40 @@ But it's more common to refer to operations like [sum](https://numpy.org/doc/sta
 
 By default, they reduce to a scalar.
 
-```{code-cell} ipython3
+```python
 np.sum(arr)
 ```
 
-```{code-cell} ipython3
+```python
 np.max(arr)
 ```
 
 But they can also reduce along one of the dimensions.
 
-![](img/example-reducer-2d.svg){. width="50%"}
+![](img/example-reducer-2d.svg){width="50%"}
 
-```{code-cell} ipython3
+```python
 np.sum(arr, axis=0)
 ```
 
-```{code-cell} ipython3
+```python
 np.sum(arr, axis=1)
 ```
 
 **Mini-quiz 3:** Using slicing, elementwise operations, and a reducer, find the length of this curve.
 
-![](img/length-by-segment.svg){. width="50%"}
+![](img/length-by-segment.svg){width="50%"}
 
-```{code-cell} ipython3
+```python
 t = np.linspace(0, 2*np.pi, 10000)
 x = np.sin(3*t)
 y = np.sin(4*t)
 ```
 
-```{code-cell} ipython3
+```python
 plt.plot(x, y);
 ```
 
 ## Lesson 2 project: Higgs decays from arrays
-
-+++
 
 As described in the [intro](0-intro.md), navigate to the `notebooks` directory and open `lesson-2-project.ipynb`, then follow its instructions.

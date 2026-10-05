@@ -1,12 +1,4 @@
 ---
-jupytext:
-  cell_metadata_filter: -all
-  formats: md:myst
-  text_representation:
-    extension: .md
-    format_name: myst
-    format_version: 0.13
-    jupytext_version: 1.16.6
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
@@ -15,11 +7,9 @@ kernelspec:
 
 # Lesson 3: Ragged and nested arrays
 
-+++
-
 So far, all the arrays we've dealt with have been rectangular (in $n$ dimensions; "rectilinear").
 
-![](img/8-layer_cube.jpg){. width="50%"}
+![](img/8-layer_cube.jpg){width="50%"}
 
 What if we had data like this?
 
@@ -135,13 +125,9 @@ Dealing with these datasets as JSON or Python objects is inefficient for the sam
 
 We want arbitrary data structure with array-oriented interface and performance...
 
-![](img/awkward-motivation-venn-diagram.svg){. width="40%"}
-
-+++
+![](img/awkward-motivation-venn-diagram.svg){width="40%"}
 
 ## Libraries for irregular arrays
-
-+++
 
 This is still a rather new field, but there are a few array libraries for arbitrary data structures.
 
@@ -150,19 +136,15 @@ This is still a rather new field, but there are a few array libraries for arbitr
 * [Parquet](https://parquet.apache.org/): Disk format for storing large datasets and (selectively) retrieving them.
 * [ROOT RNTuple](https://root.cern/doc/v622/md_tree_ntuple_v7_doc_README.html): A more flexible disk format than Parquet, in the [ROOT](https://root.cern/) framework.
 
-+++
-
 ### Apache Arrow
-
-+++
 
 Arrow arrays support arbitrary data structures, but they're intended to be used within some other interface. Increasingly, dataframe libraries are adopting Arrow as a column format.
 
-```{code-cell} ipython3
+```python
 import pyarrow as pa
 ```
 
-```{code-cell} ipython3
+```python
 arrow_array = pa.array([
     [{"x": 1.1, "y": [1]}, {"x": 2.2, "y": [1, 2]}, {"x": 3.3, "y": [1, 2, 3]}],
     [],
@@ -170,62 +152,52 @@ arrow_array = pa.array([
 ])
 ```
 
-```{code-cell} ipython3
+```python
 arrow_array.type
 ```
 
-```{code-cell} ipython3
+```python
 arrow_array
 ```
 
 ### Awkward Array
 
-+++
-
 Awkward Arrays are fully interchangeable with Arrow arrays, but they're a high-level user interface, intended for data analysts.
 
-```{code-cell} ipython3
+```python
 import awkward as ak
 ```
 
-```{code-cell} ipython3
+```python
 awkward_array = ak.from_arrow(arrow_array)
 awkward_array
 ```
 
 ### Parquet
 
-+++
-
 Awkward Arrays don't lose any information when saved as Parquet files.
 
-```{code-cell} ipython3
+```python
 ak.to_parquet(awkward_array, "/tmp/file.parquet")
 ```
 
-```{code-cell} ipython3
+```python
 ak.from_parquet("/tmp/file.parquet")
 ```
 
 ### RNTuple
 
-+++
-
 At the time of writing, RNTuple is very new and I can't provide a similar example.
 
 **TO DO:** Write this section when the tools are ready!
 
-+++
-
 ## Array-oriented programming with Awkward Arrays
-
-+++
 
 Let's start with an example to show slicing.
 
 You can find more details in the [Awkward Array documentation](https://awkward-array.org/).
 
-```{code-cell} ipython3
+```python
 ragged = ak.Array([
     [
       [[1.84, 0.324]],
@@ -253,160 +225,154 @@ ragged = ak.Array([
 
 ### Multidimensional indexing
 
-```{code-cell} ipython3
+```python
 ragged[3, 1, -1, 2]
 ```
 
 ### Range-slicing
 
-```{code-cell} ipython3
+```python
 ragged[3, 1:, -1, 1:3]
 ```
 
 ### Advanced slicing
 
-```{code-cell} ipython3
+```python
 ragged[[False, False, True, True], [0, -1, 0, -1], 0, -1]
 ```
 
 ### Awkward slicing
 
-+++
-
 Just as NumPy arrays can be sliced by NumPy arrays, Awkward Arrays can be sliced by Awkward Arrays. This lets you perform physics cuts on ragged data.
 
 See the full [Awkward slicing documentation](https://awkward-array.org/doc/main/reference/generated/ak.Array.html#ak.Array.__getitem__) for more.
 
-```{code-cell} ipython3
+```python
 ragged > 0
 ```
 
-```{code-cell} ipython3
+```python
 ragged[ragged > 0]
 ```
 
 ### Reductions
 
-```{code-cell} ipython3
+```python
 ak.sum(ragged)
 ```
 
-```{code-cell} ipython3
+```python
 ak.sum(ragged, axis=-1)
 ```
 
-```{code-cell} ipython3
+```python
 ak.sum(ragged, axis=0)
 ```
 
 Just as regular arrays can be sliced along different axes,
 
-![](img/example-reducer-2d.svg){. width="50%"}
+![](img/example-reducer-2d.svg){width="50%"}
 
 ragged arrays (even with missing values like `None`) can be sliced by defining them to be left-aligned:
 
-![](img/example-reducer-ragged.svg){. width="50%"}
+![](img/example-reducer-ragged.svg){width="50%"}
 
-```{code-cell} ipython3
+```python
 array = ak.Array([[   1,    2,    3,    4],
                   [  10, None,   30      ],
                   [ 100,  200            ]])
 ```
 
-```{code-cell} ipython3
+```python
 ak.sum(array, axis=0).tolist()
 ```
 
-```{code-cell} ipython3
+```python
 ak.sum(array, axis=1).tolist()
 ```
 
 In most particle physics applications, you'll want to reduce over the deepest/maximum `axis`, which you can get with `axis=-1`.
 
-+++
-
 ## Awkward Arrays in particle physics
-
-+++
 
 Here is a bigger version of the JSON dataset, loaded from a ROOT file with [Uproot](https://uproot.readthedocs.io/).
 
-```{code-cell} ipython3
+```python
 import uproot
 ```
 
-```{code-cell} ipython3
+```python
 file = uproot.open("data/SMHiggsToZZTo4L.root")
 file
 ```
 
-```{code-cell} ipython3
+```python
 file.classnames()
 ```
 
-```{code-cell} ipython3
+```python
 tree = file["Events"]
 tree
 ```
 
-```{code-cell} ipython3
+```python
 tree.arrays()
 ```
 
 Here it is again (with more JSON-like formatting) from a Parquet file.
 
-```{code-cell} ipython3
+```python
 events = ak.from_parquet("data/SMHiggsToZZTo4L.parquet")
 events
 ```
 
 View the first event as Python lists and dicts (like JSON).
 
-```{code-cell} ipython3
+```python
 events[0].to_list()
 ```
 
 Get one numeric field (also known as "column").
 
-```{code-cell} ipython3
+```python
 events.electron.pt
 ```
 
 Compute something ($p_z = p_T \sinh\eta$).
 
-```{code-cell} ipython3
+```python
 import numpy as np
 ```
 
-```{code-cell} ipython3
+```python
 events.electron.pt * np.sinh(events.electron.eta)
 ```
 
 The [Vector](https://vector.readthedocs.io/) library also has an Awkward Array backend, which is [documented here](https://vector.readthedocs.io/en/latest/src/awkward.html). To use it, call `register_awkward` after importing the library.
 
-```{code-cell} ipython3
+```python
 import vector
 vector.register_awkward()
 ```
 
 Now records with `name="Momentum4D"` and fields with coordinate names (`px`, `py`, `pz`, `E` or `pt`, `phi`, `eta`, `m`) automatically get Vector properties and methods.
 
-```{code-cell} ipython3
+```python
 events.electron.type.show()
 ```
 
-```{code-cell} ipython3
+```python
 # implicitly computes pz = pt * sinh(eta)
 events.electron.pz
 ```
 
 To make histograms or other plots, we need numbers without structure, so [ak.flatten](https://awkward-array.org/doc/main/reference/generated/ak.flatten.html) the array.
 
-```{code-cell} ipython3
+```python
 from hist import Hist
 ```
 
-```{code-cell} ipython3
+```python
 Hist.new.Regular(100, 0, 100, name="electron pT (GeV)").Double().fill(
     ak.flatten(events.electron.pt)
 ).plot();
@@ -414,137 +380,123 @@ Hist.new.Regular(100, 0, 100, name="electron pT (GeV)").Double().fill(
 
 Each event has a different number of electrons and muons ([ak.num](https://awkward-array.org/doc/main/reference/generated/ak.num.html) to check).
 
-```{code-cell} ipython3
+```python
 ak.num(events.electron), ak.num(events.muon)
 ```
 
 So what happens if we try to compute something with the electrons' $p_T$ and the muons' $\eta$?
 
-```{code-cell} ipython3
+```python
 :tags: ["raises-exception"]
 events.electron.pt * np.sinh(events.muon.eta)
 ```
 
 This is data structure-aware, array-oriented programming.
 
-+++
-
 ### Application: Filtering events with an array of booleans
-
-+++
 
 `events.MET.pt > 20` is a boolean array with the same length as `events`, so applying it as a slice selects events with MET $p_T > 20$ GeV.
 
-```{code-cell} ipython3
+```python
 events.MET.pt, events.MET.pt > 20
 ```
 
 After slicing, the number of events is smaller.
 
-```{code-cell} ipython3
+```python
 len(events), len(events[events.MET.pt > 20])
 ```
 
 ### Application: Filtering particles with an array of lists of booleans
 
-+++
-
 `events.electron.pt > 30` is a _ragged_ boolean array with the same length-per-list as `events.electron`. Applying it as a slice selects electrons with $p_T > 30$ GeV.
 
-```{code-cell} ipython3
+```python
 events.electron.pt, events.electron.pt > 30
 ```
 
 After slicing, the number of electrons in each event can be smaller.
 
-```{code-cell} ipython3
+```python
 ak.num(events.electron), ak.num(events.electron[events.electron.pt > 30])
 ```
 
 **Mini-quiz 1:** Using the reducer [ak.any](https://awkward-array.org/doc/main/reference/generated/ak.any.html), how would we select _events_ in which any electron has $p_T > 30$ GeV/c$^2$?
 
-+++
-
 ### Ragged combinatorics
-
-+++
 
 Awkward Array has two combinatorial primitives:
 
 * [ak.cartesian](https://awkward-array.org/doc/main/reference/generated/ak.cartesian.html) takes a [Cartesian product](https://en.wikipedia.org/wiki/Cartesian_product) of lists from $N$ different arrays, producing an array of lists of $N$-tuples.
 * [ak.combinations](https://awkward-array.org/doc/main/reference/generated/ak.combinations.html) takes $N$ [samples without replacement](http://prob140.org/sp18/textbook/notebooks-md/5_04_Sampling_Without_Replacement.html) of lists from a single array, producing an array of lists of $N$-tuples.
 
-```{code-cell} ipython3
+```python
 numbers = ak.Array([[1, 2, 3], [], [4]])
 letters = ak.Array([["a", "b"], ["c"], ["d", "e"]])
 ```
 
-```{code-cell} ipython3
+```python
 ak.cartesian([numbers, letters])
 ```
 
-```{code-cell} ipython3
+```python
 values = ak.Array([[1.1, 2.2, 3.3, 4.4], [], [5.5, 6.6]])
 ```
 
-```{code-cell} ipython3
+```python
 ak.combinations(values, 2)
 ```
 
 Often, it's useful to separate the separate the left-hand sides and right-hand sides of these pairs with [ak.unzip](https://awkward-array.org/doc/main/reference/generated/ak.unzip.html), so they can be used in mathematical expressions.
 
-```{code-cell} ipython3
+```python
 electron_muon_pairs = ak.cartesian([events.electron, events.muon])
 electron_in_pair, muon_in_pair = ak.unzip(electron_muon_pairs)
 ```
 
-```{code-cell} ipython3
+```python
 electron_in_pair.pt, muon_in_pair.pt
 ```
 
-```{code-cell} ipython3
+```python
 ak.num(electron_in_pair), ak.num(muon_in_pair)
 ```
 
 To use Vector's [deltaR](https://vector.readthedocs.io/en/latest/src/vector3d.html#vector._methods.VectorProtocolSpatial.deltaR) method ($\Delta R = \sqrt{\Delta\phi^2 + \Delta\eta^2}$), we need to have the electrons and muons in separate arrays.
 
-```{code-cell} ipython3
+```python
 electron_in_pair, muon_in_pair = ak.unzip(ak.cartesian([events.electron, events.muon]))
 ```
 
-```{code-cell} ipython3
+```python
 electron_in_pair.deltaR(muon_in_pair)
 ```
 
 Same for combinations from a single collection.
 
-```{code-cell} ipython3
+```python
 first_electron_in_pair, second_electron_in_pair = ak.unzip(ak.combinations(events.electron, 2))
 ```
 
-```{code-cell} ipython3
+```python
 first_electron_in_pair.deltaR(second_electron_in_pair)
 ```
 
 ### Application: Z mass computed from all combinations of electrons
 
-+++
-
 A rough Z mass plot can be made in three lines of code.
 
-```{code-cell} ipython3
+```python
 first_electron_in_pair, second_electron_in_pair = ak.unzip(ak.combinations(events.electron, 2))
 z_mass = (first_electron_in_pair + second_electron_in_pair).mass
 ```
 
-```{code-cell} ipython3
+```python
 Hist.new.Reg(120, 0, 120, name="mass (GeV)").Double().fill(
     ak.flatten(z_mass, axis=-1)
 ).plot();
 ```
 
 ## Lesson 3 project: Higgs combinatorics from arrays
-
-+++
 
 As described in the [intro](0-intro.md), navigate to the `notebooks` directory and open `lesson-3-project.ipynb`, then follow its instructions.

@@ -1,0 +1,26 @@
+version: 1
+project:
+  bibliography: []
+  title: Array Oriented Programming for Particle Physicists
+  authors:
+    - Jim Pivarski
+  description: An introduction to analyzing particle physics data in Python using arrays.
+  github: https://github.com/hsf-training/array-oriented-programming
+  toc:
+    - file: 0-intro.md
+    - file: 1-python.md
+    - file: 2-arrays.md
+    - file: 3-ragged.md
+    - file: 4-scaling.md
+    - file: 5-gpu.ipynb
+site:
+  template: book-theme
+  title: Array Oriented Programming for Particle Physicists
+  options:
+    logo: logo.png
+    logo_text: Array Oriented Programming
+    analytics_plausible: hepsoftwarefoundation.org
+    folders: true
+  actions:
+    - title: Issues
+      url: https://github.com/hsf-training/array-oriented-programming/issues
