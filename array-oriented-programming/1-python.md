@@ -192,7 +192,7 @@ Now `mag3d` can be used in exactly the same ways as `euclidean`, because they're
 mag3d(px, py, pz)
 ```
 
-Python's `is` keyword tells you whether two varible names refer to the same object (as opposed to just being equal to the same value).
+Python's `is` keyword tells you whether two variable names refer to the same object (as opposed to just being equal to the same value).
 
 ```{code-cell} ipython3
 mag3d is euclidean

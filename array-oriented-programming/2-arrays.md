@@ -235,7 +235,7 @@ def array_forces(m, x, p):
     return total_force
 ```
 
-The array-oriented solution is very concise—maybe even "dense"—and it invovles special NumPy functions such as [np.triu_indices](https://numpy.org/doc/stable/reference/generated/numpy.triu_indices.html) for the $n (n - 1) / 2$ combinatorics and [advanced slicing](https://numpy.org/doc/stable/user/basics.indexing.html#advanced-indexing) in square brackets (`[` `]`).
+The array-oriented solution is very concise—maybe even "dense"—and it involves special NumPy functions such as [np.triu_indices](https://numpy.org/doc/stable/reference/generated/numpy.triu_indices.html) for the $n (n - 1) / 2$ combinatorics and [advanced slicing](https://numpy.org/doc/stable/user/basics.indexing.html#advanced-indexing) in square brackets (`[` `]`).
 
 +++
 
@@ -438,7 +438,7 @@ imperative_squares(original)
 ```
 
 ```{code-cell} ipython3
-import dis  # dissasembler; shows us the Python virtual machine instructions
+import dis  # disassembler; shows us the Python virtual machine instructions
 ```
 
 ```{code-cell} ipython3
